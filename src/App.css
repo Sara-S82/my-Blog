@@ -1,0 +1,5 @@
+/* در فایل CSS یا داخل styled-components */
+a {
+  text-decoration: none;
+  color: inherit;
+}

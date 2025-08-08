@@ -1,140 +1,196 @@
-import React , {useState} from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
-  Input,
-  Grid,
+  TextField,
   Box,
   Container,
+  IconButton,
+  InputAdornment,
+  Typography,
 } from '@mui/material';
-import axios from 'axios';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { makeRequest } from '../components/makeRequest';
 
 export default function Register() {
-    const [name,setName]=useState('');
-    const [email,setEmail]=useState('');
-    const [password,setPassword]=useState('');
-    const [password_confirmation,setPassword_confirmation]=useState('')
-    const [error,setError]=useState('')
-      const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password !== passwordConfirmation) {
+      setError('Passwords do not match.');
+      return;
+    }
+    const form = { name, email, password, password_confirmation: passwordConfirmation };
+    try {
+      const res = await makeRequest('/register', 'POST', form);
+      localStorage.setItem('token', res.token);
+      navigate('/login');
+    } catch {
+      setError('An error occurred during registration.');
+    }
   };
-  const handleSubmit = async (event) => {
-     event.preventDefault();
-    const form={
-        name,email,
-        password
-        ,password_confirmation
-    }
-console.log('form: ',form);
 
-    try{
-        const res= await axios.post("https://blog.ahmadreza.dev/api/register",form, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-        
-        console.log('register');
-        
-    }
-   catch(err) {
-  if (err.response) {
-    console.log('Response status:', err.response.status);
-    console.log('Response headers:', err.response.headers);
-    console.log('Response data:', err.response.data);  // اینجا پیام دقیق خطای سرور هست
-  } else if (err.request) {
-    console.log('No response received:', err.request);
-  } else {
-    console.log('Error setting up request:', err.message);
-  }
-}
-
-  }
   return (
-  <Container
-      style={{
+    <Container
+      maxWidth="xs"
+      sx={{
+        minHeight: '100vh',
         display: 'flex',
-        height: '100vh',
-        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        bgcolor: '#f9f9f9',
+        p: 2,
       }}
     >
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          width: '60%',
-          maxWidth: 300,
-          minWidth: 180,
+          width: '100%',
           bgcolor: 'white',
-          boxShadow: 3,
-          borderRadius: 2,
-          p: 2,
+          borderRadius: 3,
+          boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
+          p: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2.5,
           textAlign: 'center',
-          alignItems: 'center',
         }}
+        noValidate
+        autoComplete="off"
       >
-        <Grid container direction="column" spacing={2}>
-             <Grid item>
-            <Input
-              placeholder="Name"
-              value={name}
-              sx={{ mb: 2, width: '70%', mt: 1 }}
-              onChange={(e) => setName(e.target.value)}
-              inputProps={{ 'aria-label': 'name', type: 'text' }}
-              required
-            />
-          </Grid>
-          <Grid item>
-            <Input
-              placeholder="Email"
-              value={email}
-              sx={{ mb: 2, width: '70%', mt: 1 }}
-              onChange={(e) => setEmail(e.target.value)}
-              inputProps={{ 'aria-label': 'Email', type: 'email' }}
-              required
-            />
-          </Grid>
+        <Typography variant="h5" fontWeight={600} mb={2} color="#333">
+          Create Account
+        </Typography>
 
-          <Grid item>
-            <Input
-              placeholder="Password"
-              value={password}
-              sx={{ mb: 2, width: '70%' }}
-              onChange={(e) => setPassword(e.target.value)}
-              inputProps={{ 'aria-label': 'Password', type: 'password' }}
-              required
-            />
-          </Grid>
-                <Grid item>
-            <Input
-              placeholder="Password_Confirmation"
-              value={password_confirmation}
-              sx={{ mb: 2, width: '70%' }}
-              onChange={(e) => setPassword_confirmation(e.target.value)}
-              inputProps={{ 'aria-label': 'Password', type: 'password' }}
-              required
-            />
-          </Grid>
+        <TextField
+          label="Name"
+          variant="outlined"
+          size="small"
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          sx={{
+            borderRadius: 2,
+          }}
+        />
 
-          {error && (
-            <Grid item>
-              <Box sx={{ color: 'red', mb: 1 }}>{error}</Box>
-            </Grid>
-          )}
+        <TextField
+          label="Email"
+          variant="outlined"
+          size="small"
+          fullWidth
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          <Grid item>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ mb: 2, width: '70%' }}
-              disableElevation
-            >
-              Login
-            </Button>
-          </Grid>
-        </Grid>
+        <TextField
+          label="Password"
+          variant="outlined"
+          size="small"
+          fullWidth
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword((show) => !show)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  edge="end"
+                  aria-label="toggle password visibility"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <TextField
+          label="Confirm Password"
+          variant="outlined"
+          size="small"
+          fullWidth
+          
+          type={showConfirmPassword ? 'text' : 'password'}
+          value={passwordConfirmation}
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
+          required
+          error={passwordConfirmation.length > 0 && password !== passwordConfirmation}
+          helperText={
+            passwordConfirmation.length > 0 && password !== passwordConfirmation
+              ? 'Passwords do not match.'
+              : ''
+          }
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowConfirmPassword((show) => !show)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  edge="end"
+                  aria-label="toggle confirm password visibility"
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        {error && (
+          <Typography color="error" fontSize="0.9rem" mt={-1} mb={1}>
+            {error}
+          </Typography>
+        )}
+
+        <Button
+          type="submit"
+          variant="contained"
+          size="medium"
+          sx={{
+            borderRadius: 3,
+            textTransform: 'none',
+            fontWeight: 600,
+            bgcolor: '#e60023',
+            '&:hover': { bgcolor: '#b0001a' },
+            boxShadow: '0 4px 15px rgba(230, 0, 35, 0.4)',
+          }}
+        >
+          Sign Up
+        </Button>
+
+        <Box display="flex" justifyContent="center" alignItems="center" gap={1}>
+          <Typography variant="body2" color="#666">
+            Already have an account?
+          </Typography>
+          <Button
+            onClick={() => navigate('/login')}
+            sx={{
+              textTransform: 'none',
+              fontWeight: 600,
+              color: '#e60023',
+              '&:hover': { backgroundColor: 'transparent', color: '#b0001a' },
+            }}
+            size="small"
+          >
+            Login
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

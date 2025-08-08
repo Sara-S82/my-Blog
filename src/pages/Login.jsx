@@ -1,113 +1,155 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
-  Input,
-  Grid,
+  TextField,
   Box,
   Container,
+  IconButton,
+  InputAdornment,
+  Typography,
 } from '@mui/material';
-import axios from 'axios';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { makeRequest } from '../components/makeRequest';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
- 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!email || !password) {
-      setError('ایمیل و پسورد را وارد کنید');
+      setError('Please enter email and password.');
       return;
     }
     if (!validateEmail(email)) {
-      setError('فرمت ایمیل اشتباه است');
+      setError('Invalid email format.');
       return;
     }
-
-    setError(''); 
-    const form = { email, password };
-
+    setError('');
     try {
-      const res = await axios.post('https://blog.ahmadreza.dev/api/register', form);
-      localStorage.setItem('token', res.data.token);
-      alert('ورود موفق');
+      const res = await makeRequest('/login', 'POST', { email, password });
+      localStorage.setItem('token', res.token);
+      alert('Login successful');
+      // optionally navigate somewhere on success
     } catch (err) {
-      alert('خطا در ورود: ' + err.message);
+      setError('Login failed: ' + err.message);
     }
   };
 
   return (
     <Container
-      style={{
-        display: 'flex',
+      maxWidth="xs"
+      sx={{
         height: '100vh',
-        width: '100%',
+        bgcolor: '#f9f9f9',
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        p: 2,
       }}
     >
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          width: '60%',
-          maxWidth: 300,
-          minWidth: 180,
+          width: '100%',
           bgcolor: 'white',
-          boxShadow: 3,
-          borderRadius: 2,
-          p: 2,
+          borderRadius: 3,
+          boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
+          p: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
           textAlign: 'center',
-          alignItems: 'center',
         }}
+        noValidate
+        autoComplete="off"
       >
-        <Grid container direction="column" spacing={2}>
-          <Grid item>
-            <Input
-              placeholder="Email"
-              value={email}
-              sx={{ mb: 2, width: '70%', mt: 1 }}
-              onChange={(e) => setEmail(e.target.value)}
-              inputProps={{ 'aria-label': 'Email', type: 'email' }}
-              required
-            />
-          </Grid>
+        <Typography variant="h5" fontWeight={600} color="#333" mb={2}>
+          Login
+        </Typography>
 
-          <Grid item>
-            <Input
-              placeholder="Password"
-              value={password}
-              sx={{ mb: 2, width: '70%' }}
-              onChange={(e) => setPassword(e.target.value)}
-              inputProps={{ 'aria-label': 'Password', type: 'password' }}
-              required
-            />
-          </Grid>
+        <TextField
+          label="Email"
+          type="email"
+          fullWidth
+          size="small"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          {error && (
-            <Grid item>
-              <Box sx={{ color: 'red', mb: 1 }}>{error}</Box>
-            </Grid>
-          )}
+        <TextField
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          fullWidth
+          size="small"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword((show) => !show)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  edge="end"
+                  aria-label="toggle password visibility"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
 
-          <Grid item>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ mb: 2, width: '70%' }}
-              disableElevation
-            >
-              Login
-            </Button>
-          </Grid>
-        </Grid>
+        {error && (
+          <Typography color="error" variant="body2" mt={-1} mb={1}>
+            {error}
+          </Typography>
+        )}
+
+        <Button
+          type="submit"
+          variant="contained"
+          sx={{
+            mt: 2,
+            bgcolor: '#e60023',
+            fontWeight: 600,
+            borderRadius: 3,
+            textTransform: 'none',
+            boxShadow: '0 4px 15px rgba(230,0,35,0.4)',
+            '&:hover': { bgcolor: '#b0001a' },
+          }}
+          disableElevation
+          fullWidth
+        >
+          Login
+        </Button>
+
+        <Box display="flex" justifyContent="center" alignItems="center" mt={2} gap={1}>
+          <Typography variant="body2" color="#666">
+            Don't have an account?
+          </Typography>
+          <Button
+            onClick={() => navigate('/register')}
+            size="small"
+            sx={{
+              color: '#e60023',
+              textTransform: 'none',
+              fontWeight: 600,
+              '&:hover': { backgroundColor: 'transparent', color: '#b0001a' },
+            }}
+          >
+            Sign Up
+          </Button>
+        </Box>
       </Box>
     </Container>
   );

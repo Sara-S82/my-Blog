@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import routes from "./Routes/routes"
 import Home from "./pages/Home";
-
+import './App.css'
 function App() {
 
   const Approutes = () => {
