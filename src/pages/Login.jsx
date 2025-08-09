@@ -10,7 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { makeRequest } from '../components/makeRequest';
+import { makeRequest } from '../sevices/makeRequest';
+import { Helmet } from 'react-helmet';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -34,7 +35,10 @@ export default function Login() {
     setError('');
     try {
       const res = await makeRequest('/login', 'POST', { email, password });
-      localStorage.setItem('token', res.token);
+    
+      localStorage.setItem('token', res.data.token);
+console.log(localStorage.getItem('token'));
+
       alert('Login successful');
       // optionally navigate somewhere on success
     } catch (err) {
@@ -43,9 +47,18 @@ export default function Login() {
   };
 
   return (
+    <>
+        <Helmet>
+<title>
+  Login
+</title>
+
+    </Helmet>
+   
     <Container
-      maxWidth="xs"
+      maxWidth='false'
       sx={{
+        width:'100%',
         height: '100vh',
         bgcolor: '#f9f9f9',
         display: 'flex',
@@ -59,6 +72,7 @@ export default function Login() {
         onSubmit={handleSubmit}
         sx={{
           width: '100%',
+          width:'full',
           bgcolor: 'white',
           borderRadius: 3,
           boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
@@ -152,5 +166,6 @@ export default function Login() {
         </Box>
       </Box>
     </Container>
+     </>
   );
 }

@@ -10,7 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { makeRequest } from '../components/makeRequest';
+import { makeRequest } from '../sevices/makeRequest';
+import { Helmet } from 'react-helmet';
 
 export default function Register() {
   const [name, setName] = useState('');
@@ -32,6 +33,7 @@ export default function Register() {
     try {
       const res = await makeRequest('/register', 'POST', form);
       localStorage.setItem('token', res.token);
+      
       navigate('/login');
     } catch {
       setError('An error occurred during registration.');
@@ -39,10 +41,19 @@ export default function Register() {
   };
 
   return (
+    <>
+    <Helmet>
+<title>
+  Sign Up
+</title>
+
+    </Helmet>
+ 
     <Container
-      maxWidth="xs"
+      maxWidth="false"
       sx={{
-        minHeight: '100vh',
+        
+        minHeight: '80vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -54,7 +65,7 @@ export default function Register() {
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          width: '100%',
+       
           bgcolor: 'white',
           borderRadius: 3,
           boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
@@ -193,5 +204,6 @@ export default function Register() {
         </Box>
       </Box>
     </Container>
+       </>
   );
 }
