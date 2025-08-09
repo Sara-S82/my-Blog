@@ -3,14 +3,13 @@ import Navbar from '../components/Navbar'
 import AppShortcutIcon from '@mui/icons-material/AppShortcut';
 import { Helmet } from 'react-helmet';
 import PostCard from '../components/PostCard';
+import CreatePost from './CreatePost';
 function Home() {
 
 
   return(
 <>
-<Helmet>
-  <title>Home</title>
-</Helmet>
+
 <Container disableGutters sx={{
   padding:0,
   backgroundColor:'#f0f4ff'
@@ -21,6 +20,7 @@ function Home() {
 <Navbar></Navbar>
 
 <PostCard />
+
 </Container>
 </>
 

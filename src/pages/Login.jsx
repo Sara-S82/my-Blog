@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -8,20 +8,30 @@ import {
   IconButton,
   InputAdornment,
   Typography,
+  Alert,
+  Snackbar,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import CheckIcon from '@mui/icons-material/Check';
 import { makeRequest } from '../sevices/makeRequest';
 import { Helmet } from 'react-helmet';
-
-export default function Login() {
+import { AuthoContext } from '../context/AuthoContext';
+export default function Login({handlelogin}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [success,setSuccess]=useState(false)
   const navigate = useNavigate();
-
+  const {login}=useContext(AuthoContext)
+const onLogin=(token)=>{
+  handlelogin(token)
+}
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
+const closeAlert=()=>{
+  setSuccess(false)
+  navigate('/')
+}
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -39,7 +49,12 @@ export default function Login() {
       localStorage.setItem('token', res.data.token);
 console.log(localStorage.getItem('token'));
 
-      alert('Login successful');
+setSuccess(true)
+const { user, token } = res.data;
+login(user, token);
+
+console.log('data: ',res.data)
+
       // optionally navigate somewhere on success
     } catch (err) {
       setError('Login failed: ' + err.message);
@@ -67,6 +82,22 @@ console.log(localStorage.getItem('token'));
         p: 2,
       }}
     >
+<Snackbar
+  open={success}
+  autoHideDuration={1000}
+  onClose={() => {
+    closeAlert()}}
+  anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // جای‌گذاری در بالای صفحه
+>
+  <Alert
+    icon={<CheckIcon fontSize="inherit" />}
+    severity="success"
+    sx={{ width: '100%' }}
+  >
+    Login successful
+  </Alert>
+</Snackbar>
+
       <Box
         component="form"
         onSubmit={handleSubmit}

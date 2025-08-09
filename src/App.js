@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import routes from "./Routes/routes"
 import Home from "./pages/Home";
+import { AuthoProvider } from "./context/AuthoContext"
 import './App.css'
 function App() {
 
@@ -19,9 +20,13 @@ function App() {
       <br></br>
       <br></br>
       <Register></Register> */}
-      <BrowserRouter>
-        <Approutes />
-      </BrowserRouter>
+      <AuthoProvider>
+
+        <BrowserRouter>
+          <Approutes />
+        </BrowserRouter>
+      </AuthoProvider>
+
 
     </div>
   );

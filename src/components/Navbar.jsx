@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
-
+import LogoutIcon from '@mui/icons-material/Logout';
 import { Button,AppBar,Toolbar,Box,Menu,IconButton,Icon,Typography,InputBase,Badge,MenuItem} from '@mui/material';
-
+import Login from '../pages/Login';
+import { AuthoContext } from '../context/AuthoContext';
+import CreatePost from '../pages/CreatePost';
+import Profile from '../pages/Profile';
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -48,10 +51,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-
+const [token,setToken]=useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
+const {user ,logout}=useContext(AuthoContext)
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -103,15 +106,28 @@ export default function PrimarySearchAppBar() {
 
     >
       <MenuItem>
+      {!user?
         <Button color="inherit" component={Link} to={'login'}>
           Login
-        </Button>
+        </Button>:<Button color="inherit" component={Link} to="profile">
+      Profile
+      </Button>}
+
       </MenuItem>
       <MenuItem>
-        <Button color="inherit" component={Link} to={'register'}>
+       {user?(   <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />): <Button color="inherit" component={Link} to={'register'}>
           Sign Up
-        </Button>
+        </Button>}
       </MenuItem>
+     
+      <MenuItem>
+        {
+    user&&  <Button color="inherit" component={Link} to="Createpost">
+       Create Post
+      </Button>
+  }
+      </MenuItem>
+      
     </Menu>
   );
 
@@ -134,15 +150,40 @@ export default function PrimarySearchAppBar() {
           </Search>
 
           <Box sx={{ flexGrow: 1 }} />
+<Box
+  sx={{
+    display: { xs: 'none', md: 'flex' },
+    alignItems: 'center',
+    gap: 2,
+  }}
+>
+  {user ? (
+    <>
+      <span>Welcome, {user.name}</span>
+      <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />
+    </>
+  ) : (
+    <>
+      <Button color="inherit" component={Link} to="login">
+        Login
+      </Button>
+      <Button color="inherit" component={Link} to="register">
+        Sign Up
+      </Button>
+    </>
+  )}
+  {
+    user&&  <Button color="inherit" component={Link} to="profile">
+      Profile
+      </Button>
+  }
+  {
+    user&&  <Button color="inherit" component={Link} to="Createpost">
+       Create Post
+      </Button>
+  }
+</Box>
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Button color="inherit" component={Link} to={'login'}>
-              Login
-            </Button>
-            <Button color="inherit" component={Link} to={'register'}>
-              Sign Up
-            </Button>
-          </Box>
 
           {/* آیکون More برای موبایل */}
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

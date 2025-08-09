@@ -9,11 +9,17 @@ export const makeRequest = async (endpoint, method = 'GET', data = null, token =
       method,
       url: `${API_BASE_URL}${endpoint}`,
       headers: {
-        "Content-Type": "application/json",
+
         ...(token && { Authorization: `Bearer ${token}` }),
       },
       data,
     };
+    if(data instanceof FormData){
+      delete config.headers["Content-Type"]
+    }
+    else{
+       config.headers["Content-Type"]="application/json"
+    }
     const response = await axios(config);
     return response.data;
   } catch (error) {
