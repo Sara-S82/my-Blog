@@ -13,6 +13,7 @@ export const makeRequest = async (endpoint, method = 'GET', data = null, token =
         ...(token && { Authorization: `Bearer ${token}` }),
       },
       data,
+        withCredentials:false
     };
     if(data instanceof FormData){
       delete config.headers["Content-Type"]

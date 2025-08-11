@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardHeader,
@@ -14,8 +14,28 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { makeRequest } from "../sevices/makeRequest";
 
 const PostCard = ({ blog }) => {
+  const[like,setLike]=useState(false)
+  const likeBlog=async()=>{
+    console.log('blog: ',blog);
+    
+    setLike(true)
+  
+    try{
+      const data={
+        is_liked_by_user:true,
+        likes_count:blog.like_count+1
+      }
+      const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",data,null)
+
+
+    }catch(err){
+console.log(err);
+
+    }
+  }
   return (
     <Card 
       sx={{ 
@@ -103,8 +123,8 @@ const PostCard = ({ blog }) => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton aria-label="like">
-            <FavoriteIcon
+          <IconButton onClick={()=>likeBlog()} aria-label="like">
+            <FavoriteIcon 
               sx={{ color: blog.is_liked_by_user ? "red" : "inherit" }}
             />
           </IconButton>
