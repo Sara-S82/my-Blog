@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -9,30 +10,53 @@ import {
   IconButton,
   Typography,
   Box,
+  Snackbar,
+  Button
 } from "@mui/material";
+import CheckIcon from '@mui/icons-material/Check';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { makeRequest } from "../sevices/makeRequest";
+import { Alert } from "@mui/joy";
 
 const PostCard = ({ blog }) => {
-  const[like,setLike]=useState(false)
-  const[comment,setComment]=useState(false)
-  const likeBlog=async()=>{
-    console.log('blog: ',blog);
-    
-    setLike(true)
+  const navigate =useNavigate()
+  const[like,setLike]=useState(blog.is_liked_by_user)
+
+  const [isLoggedin,setIsloggedin]=useState(Boolean(localStorage.getItem("token")))
+  const [likecount,setLikecount]=useState(blog.likes_count);
+  const [loginalert,setLoginalert]=useState(false)
+  const closealert=()=>{
+    setLoginalert(false)
+  }
+     const token = localStorage.getItem("token");
+  console.log(likecount);
   
+  const[comment,setgetComment]=useState(false)
+  const likeBlog=async()=>{
+
+
+  if(!isLoggedin)  {
+
+    setLoginalert(true)
+return
+  }
+    
+    setLike(!like)
+    const temp=!like?likecount+1:likecount-1;
+    console.log('temp: ',temp);
+    
+  setLikecount(temp)
+
     try{
-      const data={
-        is_liked_by_user:true,
-        likes_count:blog.like_count+1
-      }
-      const token = localStorage.getItem("token");
+     
+      
+   
       console.log('token: ',token);
-      const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",data,token)
-    console.log('blog: ',blog);
+      const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",null,token)
+    console.log('blog: ',res.data);
 
     }catch(err){
 console.log(err);
@@ -40,27 +64,53 @@ console.log(err);
     }
   }
 
-//     const commentblog=async()=>{
-//     console.log('blog: ',blog);
+    const commentblog=async()=>{
+    if(!isLoggedin)  {
+
+  setLoginalert(true)
+
+return
+  }
     
-//     setLike(true)
+    
+    setgetComment(true)
   
-//     try{
-//       const data={
-//         is_liked_by_user:true,
-//         likes_count:blog.like_count+1
-//       }
+    try{
+      const data={
+        liked:true,
+        likes_count:blog.like_count+1
+      }
    
       
-//       const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",data,token)
+      const res=await makeRequest(`/blogs/${blog.id}/comments`,"GET",null,token)
 
 
-//     }catch(err){
-// console.log(err);
+    }catch(err){
+console.log(err);
 
-//     }
-//   }
+    }
+  }
   return (
+    <>
+            <Snackbar
+              open={loginalert}
+              autoHideDuration={3000}
+             onClose={closealert}
+            sx={{p:4}}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+              <Alert
+                icon={<CheckIcon fontSize="inherit" />}
+                severity="secondary"
+                sx={{ width: '100%' }}
+              >
+              please login to comment and like
+              <span>
+                <Button onClick={()=>navigate('/login')}>Login</Button>
+              </span>
+              </Alert>
+            </Snackbar>
+ 
     <Card 
       sx={{ 
        width:"100%", 
@@ -71,6 +121,7 @@ console.log(err);
         height: 450,
       }}
     >
+
       <CardHeader
         avatar={<Avatar>{blog.user.name.charAt(0)}</Avatar>}
         action={
@@ -140,7 +191,7 @@ console.log(err);
           </IconButton>
           <Typography variant="body2">{blog.views_count || 0}</Typography>
 
-          <IconButton aria-label="comments">
+          <IconButton onClick={()=>commentblog()} aria-label="comments">
             <ChatBubbleOutlineIcon fontSize="small" />
           </IconButton>
           <Typography variant="body2">{blog.comments?.length || 0}</Typography>
@@ -149,13 +200,14 @@ console.log(err);
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton onClick={()=>likeBlog()} aria-label="like">
             <FavoriteIcon 
-              sx={{ color: blog.is_liked_by_user ? "red" : "inherit" }}
+              sx={{ color: like ? "red" : "inherit" }}
             />
           </IconButton>
-          <Typography variant="body2">{blog.likes_count}</Typography>
+          <Typography variant="body2">{likecount}</Typography>
         </Box>
       </CardActions>
     </Card>
+       </>
   );
 };
 

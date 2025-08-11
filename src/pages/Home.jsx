@@ -58,7 +58,7 @@ function Home() {
           <Grid container sx={{px:2,py:4}} spacing={1} justifyContent="center">
             {currentPosts.map((blog) => (
               <Grid item xs={12} sm={6} md={2}  sx={{ width: '100%', maxWidth: 345, mx: 'auto', mb:{xs:6,sm:4} }} key={blog.id}>
-                <PostCard blog={blog} />
+                <PostCard blog={blog}  />
               </Grid>
             ))}
           </Grid>
