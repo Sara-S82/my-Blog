@@ -3,7 +3,7 @@ import { Container, Card, CardContent, Avatar, Typography, Badge, Box, TextField
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import { makeRequest } from '../sevices/makeRequest';
-
+import MainLayout from '../layouts/MainLayout'
 function Profile() {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -37,10 +37,10 @@ function Profile() {
   const handleEditToggle = (e) => {
 e.preventDefault()
     if (isEditing) {
-      // Save action
+   
       handleSave();
     } else {
-      // Switch to edit mode
+    
       setIsEditing(true);
     }
   };
@@ -56,7 +56,7 @@ e.preventDefault()
     const token = localStorage.getItem("token");
 
     try {
-      // Prepare data to send (excluding empty password fields)
+     
       const dataToSend = {
         name: formData.name,
         email: formData.email,
@@ -68,7 +68,7 @@ e.preventDefault()
 
       const res = await makeRequest("/update-profile", "PUT", dataToSend, token);
 
-      setUser(res.data.user);  // update user data from server response
+      setUser(res.data.user);  
       setIsEditing(false);
       setFormData(prev => ({
         ...prev,
@@ -83,16 +83,29 @@ e.preventDefault()
   };
 
   return (
-    <Container maxWidth="lg">
+    <MainLayout>
+    <Container    maxWidth={false}
+  disableGutters
+  sx={{
+    padding:0,
+    margin:0,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+
+  }}>
       <Box
         sx={{
+          p:0,
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           width: '100%',
           height: '100vh',
         }}
       >
-        {/* Sidebar */}
+       
         <Box sx={{ flex: 1, width: { xs: '100%', md: '30%' }, bgcolor: '#eee', p: 2 }}>
           <Card sx={{ maxWidth: 300, textAlign: "center", p: 2, margin: 'auto' }}>
             <Box sx={{ position: "relative", display: "inline-block" }}>
@@ -197,6 +210,7 @@ e.preventDefault()
         </Box>
       </Box>
     </Container>
+    </MainLayout>
   );
 }
 

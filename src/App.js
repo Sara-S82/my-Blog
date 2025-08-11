@@ -4,31 +4,24 @@ import Register from "./pages/Register";
 import routes from "./Routes/routes"
 import Home from "./pages/Home";
 import { AuthoProvider } from "./context/AuthoContext"
+import { Container } from '@mui/material'
 import './App.css'
 function App() {
 
   const Approutes = () => {
     return useRoutes(routes)
   }
-  return (
-    <div className="App">
+  return (<>
 
 
-      {/* <Login></Login>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <Register></Register> */}
-      <AuthoProvider>
+    <AuthoProvider>
 
-        <BrowserRouter>
-          <Approutes />
-        </BrowserRouter>
-      </AuthoProvider>
+      <BrowserRouter>
+        <Approutes />
+      </BrowserRouter>
+    </AuthoProvider>
+  </>
 
-
-    </div>
   );
 }
 

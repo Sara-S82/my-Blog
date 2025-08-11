@@ -75,7 +75,12 @@ const {user ,logout}=useContext(AuthoContext)
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
-  
+  sx={{
+    width: '100%',
+    height: '100vh',
+    padding:0,
+    margin:0
+  }}
       anchorEl={anchorEl}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       id={menuId}
@@ -103,7 +108,12 @@ const {user ,logout}=useContext(AuthoContext)
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
-
+sx={{
+    width: '100%',
+    height: '100vh',
+    padding:0,
+    margin:0
+  }}
     >
       <MenuItem>
       {!user?
@@ -115,25 +125,28 @@ const {user ,logout}=useContext(AuthoContext)
 
       </MenuItem>
       <MenuItem>
-       {user?(   <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />): <Button color="inherit" component={Link} to={'register'}>
+       {user?( <Button color="inherit" component={Link} to="Createpost">
+       Create Post
+      </Button>  ): <Button color="inherit" component={Link} to={'register'}>
           Sign Up
         </Button>}
       </MenuItem>
      
-      <MenuItem>
+      
         {
-    user&&  <Button color="inherit" component={Link} to="Createpost">
-       Create Post
-      </Button>
-  }
+    user&& <MenuItem> 
+      <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />
       </MenuItem>
+  }
       
     </Menu>
   );
 
   return (
-    <Box sx={{ flexGrow: 1 ,marginBottom:2}}>
-      <AppBar position="static" sx={{ bgcolor: '#C62828' }}>
+    <Box sx={{ flexGrow: 1 ,marginBottom:2 ,width:'100%',
+   padding:0,
+   margin:0}}>
+      <AppBar position="static" sx={{ bgcolor: '#C62828' , width:'100%'}}>
         <Toolbar>
           <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
             My Blog
@@ -160,27 +173,46 @@ const {user ,logout}=useContext(AuthoContext)
   {user ? (
     <>
       <span>Welcome, {user.name}</span>
-      <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />
+     <Button sx={{textTransform: 'none',
+    '&:hover': {
+      bgcolor: '#f0f4ff',  
+      color: '#5a5757ff',
+    },}}  color="inherit" component={Link} to="profile">
+      Profile
+      </Button>
     </>
   ) : (
     <>
-      <Button color="inherit" component={Link} to="login">
+      <Button sx={{textTransform: 'none',
+    '&:hover': {
+         bgcolor: '#f0f4ff',  
+      color: '#5a5757ff',
+    },}} color="inherit" component={Link} to="login">
         Login
       </Button>
-      <Button color="inherit" component={Link} to="register">
+      <Button sx={{textTransform: 'none',
+    '&:hover': {
+       bgcolor: '#f0f4ff',  
+      color: '#5a5757ff',
+    },}}  color="inherit" component={Link} to="register">
         Sign Up
       </Button>
     </>
   )}
   {
-    user&&  <Button color="inherit" component={Link} to="profile">
-      Profile
-      </Button>
+    user&& 
+    <Button sx={{textTransform: 'none',
+    '&:hover': {
+      bgcolor: '#f0f4ff',  
+      color: '#5a5757ff',
+     
+    },}}  color="inherit" component={Link} to="Createpost">
+       Create Post
+      </Button> 
+      
   }
   {
-    user&&  <Button color="inherit" component={Link} to="Createpost">
-       Create Post
-      </Button>
+    user&&   <LogoutIcon onClick={logout} sx={{ cursor: 'pointer' }} />
   }
 </Box>
 

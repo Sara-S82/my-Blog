@@ -8,12 +8,17 @@ import {
   IconButton,
   InputAdornment,
   Typography,
+  Alert,
+  Snackbar
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { makeRequest } from '../sevices/makeRequest';
 import { Helmet } from 'react-helmet';
+import AuthLayout from '../layouts/AuthLayout';
 
 export default function Register() {
+   const [success,setSuccess]=useState(false)
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +27,10 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
+const closeAlert=()=>{
+  setSuccess(false)
+  navigate('/')
+}
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
@@ -34,7 +42,8 @@ export default function Register() {
       const res = await makeRequest('/register', 'POST', form);
       localStorage.setItem('token', res.token);
       
-      navigate('/login');
+setSuccess(true)
+  
     } catch {
       setError('An error occurred during registration.');
     }
@@ -48,24 +57,39 @@ export default function Register() {
 </title>
 
     </Helmet>
- 
+ <AuthLayout>
     <Container
-      maxWidth="false"
-      sx={{
-        
-        minHeight: '80vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        bgcolor: '#f9f9f9',
-        p: 2,
-      }}
+maxWidth={false}
+  disableGutters
+  sx={{
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    bgcolor: '#f9f9f9',
+  }}
     >
+      <Snackbar
+        open={success}
+        autoHideDuration={1000}
+        onClose={() => {
+          closeAlert()}}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // جای‌گذاری در بالای صفحه
+      >
+        <Alert
+          icon={<CheckIcon fontSize="inherit" />}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Register successful
+        </Alert>
+      </Snackbar>
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-       
+        
           bgcolor: 'white',
           borderRadius: 3,
           boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
@@ -203,7 +227,7 @@ export default function Register() {
           </Button>
         </Box>
       </Box>
-    </Container>
+    </Container></AuthLayout>
        </>
   );
 }
