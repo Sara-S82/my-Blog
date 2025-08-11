@@ -18,6 +18,7 @@ import { makeRequest } from "../sevices/makeRequest";
 
 const PostCard = ({ blog }) => {
   const[like,setLike]=useState(false)
+  const[comment,setComment]=useState(false)
   const likeBlog=async()=>{
     console.log('blog: ',blog);
     
@@ -29,6 +30,26 @@ const PostCard = ({ blog }) => {
         likes_count:blog.like_count+1
       }
       const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",data,null)
+
+
+    }catch(err){
+console.log(err);
+
+    }
+  }
+
+    const commentblog=async()=>{
+    console.log('blog: ',blog);
+    
+    setLike(true)
+  
+    try{
+      const data={
+        is_liked_by_user:true,
+        likes_count:blog.like_count+1
+      }
+      const token = localStorage.getItem("token");
+      const res=await makeRequest(`/blogs/${blog.id}/like`,"POST",data,token)
 
 
     }catch(err){
