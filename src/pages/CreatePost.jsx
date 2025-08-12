@@ -5,6 +5,7 @@ import { makeRequest } from "../sevices/makeRequest";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import AlertModal from "../Modal/AlertModal";
 
 const ImportSite = ({ onFileSelect }) => {
   const [file, setFile] = useState(null);
@@ -14,6 +15,7 @@ const ImportSite = ({ onFileSelect }) => {
     setFile(selectedFile);
     onFileSelect(selectedFile);
   };
+  
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -37,6 +39,7 @@ const ImportSite = ({ onFileSelect }) => {
       onDrop={handleDrop}
       onDragOver={(e) => e.preventDefault()}
     >
+        
       {!file ? (
         <>
           <CloudUploadIcon sx={{ fontSize: 50, color: "#888" }} />
@@ -90,7 +93,18 @@ function CreatePost() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [cover_image, setcover_image] = useState(null);
-  const navigate = useNavigate();
+ const [showsuccess, setshowsuccess] = useState(false);
+ const [Type,setType]=useState('success')
+ const [success, setSuccess] = useState(false);
+
+  const [message,setMessage]=useState('')
+  const navigate=useNavigate();
+    const CloseAlert = () => {
+      setshowsuccess(false);
+
+    };
+  
+
   const { user } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -107,11 +121,22 @@ function CreatePost() {
       const response = await makeRequest("/blogs", "POST", post_formData, token);
 
       console.log("Blog created:", response.data);
-      alert("Blog created successfully!");
+   setType('success')
+              setSuccess(true);
+   setMessage("successfuly create the post.")
+
+    setTimeout(()=>{ navigate('/')},1000)
+
 
     } catch (error) {
       console.error(error);
       console.log(error.message);
+              setSuccess(true);
+      setType('error')
+   setMessage("Failed to update the post. Please try again")
+   setTimeout(()=>{ navigate('/')},1000)
+
+
     }
   };
 
@@ -129,6 +154,12 @@ function CreatePost() {
           p: 2,
         }}
       >
+          <AlertModal
+          success={success}
+          closeAlert={CloseAlert}
+          message={message}
+          type={Type}
+        />
         <Box
           onSubmit={handleSubmit}
           component={"form"}

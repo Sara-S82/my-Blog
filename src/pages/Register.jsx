@@ -8,7 +8,7 @@ import {
   IconButton,
   InputAdornment,
   Typography,
-  Alert,
+ 
   Snackbar
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
@@ -16,6 +16,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { makeRequest } from '../sevices/makeRequest';
 import { Helmet } from 'react-helmet';
 import AuthLayout from '../layouts/AuthLayout';
+import Alert from '../Modal/AlertModal';
+
 
 export default function Register() {
    const [success,setSuccess]=useState(false)
@@ -70,21 +72,9 @@ maxWidth={false}
     bgcolor: '#f9f9f9',
   }}
     >
-      <Snackbar
-        open={success}
-        autoHideDuration={1000}
-        onClose={() => {
-          closeAlert()}}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // جای‌گذاری در بالای صفحه
-      >
-        <Alert
-          icon={<CheckIcon fontSize="inherit" />}
-          severity="success"
-          sx={{ width: '100%' }}
-        >
-          Register successful
-        </Alert>
-      </Snackbar>
+ 
+           <Alert success={success} closeAlert={closeAlert} message={"Register successful"} />
+      
       <Box
         component="form"
         onSubmit={handleSubmit}

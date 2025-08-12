@@ -8,7 +8,7 @@ import {
   IconButton,
   InputAdornment,
   Typography,
-  Alert,
+ scrollTop,
   Snackbar,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -17,7 +17,7 @@ import { makeRequest } from '../sevices/makeRequest';
 import { Helmet } from 'react-helmet';
 import { AuthoContext } from '../context/AuthoContext';
 import AuthLayout from '../layouts/AuthLayout';
-
+import AlertModal from '../Modal/AlertModal';
 export default function Login({ handlelogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -84,20 +84,7 @@ export default function Login({ handlelogin }) {
           alignItems: 'center',
         }}
       >
-        <Snackbar
-          open={success}
-          autoHideDuration={1000}
-          onClose={closeAlert}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert
-            icon={<CheckIcon fontSize="inherit" />}
-            severity="success"
-            sx={{ width: '100%' }}
-          >
-            Login successful
-          </Alert>
-        </Snackbar>
+     <AlertModal success={success} closeAlert={closeAlert}  message={"Login successful"} />
 
         <Box
           component="form"

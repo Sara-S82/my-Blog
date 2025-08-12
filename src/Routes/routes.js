@@ -6,6 +6,7 @@ import { Children } from "react";
 import Profile from "../pages/Profile";
 import CreatePost from "../pages/CreatePost";
 import Privatelink from "../components/Privatelink";
+import BlogDetails from "../pages/BlogDetails"
 const routes = [
 
     {
@@ -19,7 +20,10 @@ const routes = [
         path: 'createpost', element: <Privatelink><CreatePost /></Privatelink>
     },
     { path: 'register', element: <Register /> },
-    { path: '/', element: <Home /> }
+    { path: '/', element: <Home /> },
+    {
+        path: "/post/:id", element: <BlogDetails token={localStorage.getItem("token")} />
+    }
 
 ]
 export default routes;
