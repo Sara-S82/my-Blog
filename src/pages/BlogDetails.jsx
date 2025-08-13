@@ -10,10 +10,11 @@ import {
   List,
   ListItem,
   ListItemText,
+  IconButton
 } from "@mui/material";
 import { makeRequest } from "../sevices/makeRequest";
 import MainLayout from "../layouts/MainLayout";
-
+import SendIcon from '@mui/icons-material/Send';
 const BlogDetails = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
@@ -89,9 +90,24 @@ const BlogDetails = () => {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
             />
-            <Button variant="contained" onClick={handleAddComment}>
-              Submit
-            </Button>
+            <IconButton
+              aria-label="send"
+              onClick={handleAddComment}
+              sx={{
+                bgcolor: 'primary.main',
+                color: 'white',
+                p: { xs: 1, sm: 1.5 },
+                borderRadius: '8px',
+                transition: 'background-color 0.3s ease',
+                '&:hover': {
+                  bgcolor: 'primary.dark',
+                },
+                boxShadow: 2,
+              }}
+            >
+              <SendIcon fontSize="small" />
+            </IconButton>
+
           </Box>
 
           {/* Comments list */}

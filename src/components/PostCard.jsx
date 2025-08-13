@@ -209,14 +209,18 @@ const PostCard = ({ blog, token = null }) => {
           title={blog.user.name}
           subheader={new Date(blog.created_at).toDateString()}
         />
-
-        <CardMedia
+        <Box
           component="img"
-          height="194"
-          sx={{ objectFit: 'contain' }}
-          image={blog.cover_image || "/writing.jpg"}
+          src={blog.cover_image || "/writing.jpg"}
           alt={blog.title}
+          sx={{
+            height: 194,
+            width: '100%',
+            objectFit: 'contain',
+            borderRadius: 2,
+          }}
         />
+
 
         <CardContent
           sx={{
