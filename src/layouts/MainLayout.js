@@ -10,8 +10,8 @@ export default function AuthLayout({ children }) {
     return (
         <Box
             sx={{
-                width: '100vw',
-                height: '100vh',
+                width: '100%',
+                height: 'auto',
                 bgcolor: '#f9f9f9',
                 m: 0,
                 p: 0,

@@ -3,7 +3,6 @@ import { Box, Container, Typography, AppBar, Toolbar } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
-
 export default function AuthLayout({ children }) {
     const navigate = useNavigate();
 

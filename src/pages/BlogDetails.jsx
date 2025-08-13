@@ -1,56 +1,126 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Container, Typography, Box, CircularProgress, Button } from "@mui/material";
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  Typography,
+  Box,
+  CircularProgress,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { makeRequest } from "../sevices/makeRequest";
+import MainLayout from "../layouts/MainLayout";
 
-const BlogDetails = ({ token }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const BlogDetails = () => {
+  const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState([]);
+
   useEffect(() => {
     async function fetchPost() {
       try {
-        const response = await makeRequest(`/blogs/${id}`, "GET", null, token);
+        const response = await makeRequest(`/blogs/${slug}`, "GET");
         setPost(response.data);
+        setComments(response.data.comments || []);
       } catch (err) {
-        setError("Failed to load post");
+        setError(`Failed to load post : ${err}`);
       } finally {
         setLoading(false);
       }
     }
-
     fetchPost();
-  }, [id, token]);
+  }, [slug]);
+
+  const handleAddComment = () => {
+    if (commentText.trim() === "") return;
+    // You can replace this with an API call
+    const newComment = {
+      id: Date.now(),
+      text: commentText,
+      user: { name: "You" },
+      created_at: new Date().toISOString(),
+    };
+    setComments((prev) => [newComment, ...prev]);
+    setCommentText("");
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{error}</Typography>;
-  if (!post) return <Typography>No post found</Typography>;
+  if (!post) return <Typography>No post found.</Typography>;
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Button variant="outlined" onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-        Back
-      </Button>
-      <Typography variant="h4" gutterBottom>
-        {post.title}
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-        By {post.user.name} | {new Date(post.created_at).toLocaleDateString()}
-      </Typography>
-      <Box
-        component="img"
-        src={post.cover_image || "/writing.jpg"}
-        alt={post.title}
-        sx={{ width: "100%", maxHeight: 400, objectFit: "cover", borderRadius: 2, mb: 3 }}
-      />
-      <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
-        {post.description}
-      </Typography>
- 
-    </Container>
+    <MainLayout>
+      <Container maxWidth="md" sx={{ display: "flex", p: 3, flexDirection: "column", gap: 2 }}>
+        <Typography variant="h4">{post.title}</Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          By {post.user.name} | {new Date(post.created_at).toLocaleDateString()}
+        </Typography>
+
+        <Box
+          component="img"
+          src={post.cover_image || "/writing.jpg"}
+          alt={post.title}
+          sx={{ width: "100%", maxHeight: 400, objectFit: "cover", borderRadius: 2 }}
+        />
+
+        <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+          {post.description}
+        </Typography>
+
+        {/* Comments section */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Comments
+          </Typography>
+
+          {/* Comment input form */}
+          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Your comment"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+            <Button variant="contained" onClick={handleAddComment}>
+              Submit
+            </Button>
+          </Box>
+
+          {/* Comments list */}
+          <List>
+            {comments.length === 0 && (
+              <Typography color="text.secondary">No comments yet.</Typography>
+            )}
+            {comments.map((c) => (
+              <ListItem key={c.id} alignItems="flex-start" divider>
+                <ListItemText
+                  primary={c.user.name}
+                  secondary={
+                    <>
+                      <Typography component="span" variant="body2" color="text.primary">
+                        {c.text}
+                      </Typography>
+                      <br />
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(c.created_at).toLocaleString()}
+                      </Typography>
+                    </>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Container>
+    </MainLayout>
   );
 };
 

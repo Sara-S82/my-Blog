@@ -22,7 +22,7 @@ const routes = [
     { path: 'register', element: <Register /> },
     { path: '/', element: <Home /> },
     {
-        path: "/post/:id", element: <BlogDetails token={localStorage.getItem("token")} />
+        path: "/post/:slug", element: <BlogDetails />
     }
 
 ]

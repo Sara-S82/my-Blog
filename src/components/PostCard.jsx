@@ -35,17 +35,17 @@ const PostCard = ({ blog, token = null }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [postblog, setPostblog] = useState(blog);
   const [openeditmodal, setOpeneditmodal] = useState(false);
-const [opendeletmodal,setopendeletmodal]=useState(false)
+  const [opendeletmodal, setopendeletmodal] = useState(false)
   const handleOpeneditmodal = () => setOpeneditmodal(true);
 
   const handleCloseeditmodal = () => {
     setOpeneditmodal(false);
     setAnchorEl(null);
   };
-const handelclosedelemodal=()=>{
-setopendeletmodal(false)
- setAnchorEl(null);
-}
+  const handelclosedelemodal = () => {
+    setopendeletmodal(false)
+    setAnchorEl(null);
+  }
   const closealert = () => {
     setLoginalert(false);
   };
@@ -106,7 +106,10 @@ setopendeletmodal(false)
       </Snackbar>
 
       <Card
-      onClick={() => navigate(`/post/${blog.id}`)}
+        onClick={() => {
+          console.log(blog);
+          navigate(`/post/${blog.slug}`)
+        }}
 
         sx={{
           width: "100%",
@@ -121,86 +124,87 @@ setopendeletmodal(false)
           avatar={<Avatar>{blog.user.name.charAt(0)}</Avatar>}
           action={
             token ? (
-         <>
-  <IconButton
-    aria-label="settings"
-    onClick={handleMenuOpen}
-    size="medium"
-    sx={{
-      color: 'text.secondary',
-      transition: 'color 0.3s ease',
-      '&:hover': {
-        color: 'primary.main',
-        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-      },
-    }}
-  >
-    <MoreVertIcon fontSize="medium" />
-  </IconButton>
+              <>
+                <IconButton
+                  aria-label="settings"
+                  onClick={handleMenuOpen}
+                  size="medium"
+                  sx={{
+                    color: 'text.secondary',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                      color: 'primary.main',
+                      backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                    },
+                  }}
+                >
+                  <MoreVertIcon fontSize="medium" />
+                </IconButton>
 
-  <Menu
-    anchorEl={anchorEl}
-    open={Boolean(anchorEl)}
-    onClose={handleMenuClose}
-    PaperProps={{
-      elevation: 8,
-      sx: {
-        borderRadius: 2,
-    
-        boxShadow:
-          '0 4px 20px rgba(0,0,0,0.12), 0 7px 10px rgba(0,0,0,0.15)',
-        py: 1,
-      },
-    }}
-    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-  >
-    <MenuItem
-      onClick={() => {
-        setOpeneditmodal(true);
-        handleMenuClose();
-      }}
- 
-    >
-      Edit
-    </MenuItem>
-    <MenuItem
-      onClick={()=>{
-        setopendeletmodal(true)
-        handleMenuClose()}}
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    elevation: 8,
+                    sx: {
+                      borderRadius: 2,
 
-    >
-      Delete
-    </MenuItem>
-  </Menu>
-<DeletePost id={blog.id} open={opendeletmodal}  onClose={handelclosedelemodal} />
-  <Modal
-    open={openeditmodal}
-    onClose={handleCloseeditmodal}
-    disableEnforceFocus={false}
-  >
-    <Box
-      sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: { md: '70%', sx: '100%' },
-        bgcolor: 'background.paper',
-        m: { sx: 5 },
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2,
-      }}
-    >
-      <UpdatePostForm
-        token={token}
-        initialData={postblog}
-        closemodal={handleCloseeditmodal}
-      />
-    </Box>
-  </Modal>
-</>  ) : null
+                      boxShadow:
+                        '0 4px 20px rgba(0,0,0,0.12), 0 7px 10px rgba(0,0,0,0.15)',
+                      py: 1,
+                    },
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      setOpeneditmodal(true);
+                      handleMenuClose();
+                    }}
+
+                  >
+                    Edit
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setopendeletmodal(true)
+                      handleMenuClose()
+                    }}
+
+                  >
+                    Delete
+                  </MenuItem>
+                </Menu>
+                <DeletePost id={blog.id} open={opendeletmodal} onClose={handelclosedelemodal} />
+                <Modal
+                  open={openeditmodal}
+                  onClose={handleCloseeditmodal}
+                  disableEnforceFocus={false}
+                >
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: { md: '70%', sx: '100%' },
+                      bgcolor: 'background.paper',
+                      m: { sx: 5 },
+                      boxShadow: 24,
+                      p: 4,
+                      borderRadius: 2,
+                    }}
+                  >
+                    <UpdatePostForm
+                      token={token}
+                      initialData={postblog}
+                      closemodal={handleCloseeditmodal}
+                    />
+                  </Box>
+                </Modal>
+              </>) : null
           }
           title={blog.user.name}
           subheader={new Date(blog.created_at).toDateString()}
@@ -209,6 +213,7 @@ setopendeletmodal(false)
         <CardMedia
           component="img"
           height="194"
+          sx={{ objectFit: 'contain' }}
           image={blog.cover_image || "/writing.jpg"}
           alt={blog.title}
         />
