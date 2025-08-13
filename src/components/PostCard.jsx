@@ -106,10 +106,7 @@ const PostCard = ({ blog, token = null }) => {
       </Snackbar>
 
       <Card
-        onClick={() => {
-          console.log(blog);
-          navigate(`/post/${blog.slug}`)
-        }}
+
 
         sx={{
           width: "100%",
@@ -184,6 +181,10 @@ const PostCard = ({ blog, token = null }) => {
                   disableEnforceFocus={false}
                 >
                   <Box
+                    onClick={() => {
+                      console.log(blog);
+                      navigate(`/post/${blog.slug}`)
+                    }}
                     sx={{
                       position: 'absolute',
                       top: '50%',
