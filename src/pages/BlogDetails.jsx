@@ -115,6 +115,7 @@ const BlogDetails = () => {
             {comments.length === 0 && (
               <Typography color="text.secondary">No comments yet.</Typography>
             )}
+            <p>comments:</p>
             {comments.map((c) => (
               <ListItem key={c.id} alignItems="flex-start" divider>
                 <ListItemText

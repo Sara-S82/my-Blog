@@ -36,21 +36,28 @@ const PostCard = ({ blog, token = null }) => {
   const [postblog, setPostblog] = useState(blog);
   const [openeditmodal, setOpeneditmodal] = useState(false);
   const [opendeletmodal, setopendeletmodal] = useState(false)
-  const handleOpeneditmodal = () => setOpeneditmodal(true);
+  const handleOpeneditmodal = (e) => {
+    e.stopPropagation()
+    setOpeneditmodal(true);
+  }
 
-  const handleCloseeditmodal = () => {
+  const handleCloseeditmodal = (e) => {
+    e.stopPropagation()
     setOpeneditmodal(false);
     setAnchorEl(null);
   };
-  const handelclosedelemodal = () => {
+  const handelclosedelemodal = (e) => {
+    e.stopPropagation()
     setopendeletmodal(false)
     setAnchorEl(null);
   }
-  const closealert = () => {
+  const closealert = (e) => {
+    e.stopPropagation()
     setLoginalert(false);
   };
 
-  const likeBlog = async () => {
+  const likeBlog = async (e) => {
+    e.stopPropagation()
     if (!isLoggedin) {
       setLoginalert(true);
       return;
@@ -66,7 +73,8 @@ const PostCard = ({ blog, token = null }) => {
     }
   };
 
-  const commentblog = async () => {
+  const commentblog = async (e) => {
+    e.stopPropagation()
     if (!isLoggedin) {
       setLoginalert(true);
       return;
@@ -79,10 +87,12 @@ const PostCard = ({ blog, token = null }) => {
   };
 
   const handleMenuOpen = (event) => {
+    event.stopPropagation()
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e) => {
+    e.stopPropagation()
     setAnchorEl(null);
   };
 
@@ -91,7 +101,7 @@ const PostCard = ({ blog, token = null }) => {
       <Snackbar
         open={loginalert}
         autoHideDuration={3000}
-        onClose={closealert}
+        onClose={(e) => closealert(e)}
         sx={{ p: 4 }}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
@@ -101,12 +111,18 @@ const PostCard = ({ blog, token = null }) => {
           sx={{ width: '100%' }}
         >
           Please login to comment and like
-          <Button onClick={() => navigate('/login')}>Login</Button>
+          <Button onClick={(e) => {
+            e.stopPropagation()
+            navigate('/login')
+          }}>Login</Button>
         </Alert>
       </Snackbar>
 
       <Card
-
+        onClick={() => {
+          console.log(blog);
+          navigate(`/post/${blog.slug}`)
+        }}
 
         sx={{
           width: "100%",
@@ -124,7 +140,7 @@ const PostCard = ({ blog, token = null }) => {
               <>
                 <IconButton
                   aria-label="settings"
-                  onClick={handleMenuOpen}
+                  onClick={(e) => handleMenuOpen(e)}
                   size="medium"
                   sx={{
                     color: 'text.secondary',
@@ -156,28 +172,30 @@ const PostCard = ({ blog, token = null }) => {
                   anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                   <MenuItem
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation()
                       setOpeneditmodal(true);
-                      handleMenuClose();
+                      handleMenuClose(e);
                     }}
 
                   >
                     Edit
                   </MenuItem>
                   <MenuItem
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation()
                       setopendeletmodal(true)
-                      handleMenuClose()
+                      handleMenuClose(e)
                     }}
 
                   >
                     Delete
                   </MenuItem>
                 </Menu>
-                <DeletePost id={blog.id} open={opendeletmodal} onClose={handelclosedelemodal} />
+                <DeletePost id={blog.id} open={opendeletmodal} onClose={(e) => handelclosedelemodal(e)} />
                 <Modal
                   open={openeditmodal}
-                  onClose={handleCloseeditmodal}
+                  onClose={(e) => handleCloseeditmodal(e)}
                   disableEnforceFocus={false}
                 >
                   <Box
@@ -201,7 +219,7 @@ const PostCard = ({ blog, token = null }) => {
                     <UpdatePostForm
                       token={token}
                       initialData={postblog}
-                      closemodal={handleCloseeditmodal}
+                      closemodal={(e) => handleCloseeditmodal(e)}
                     />
                   </Box>
                 </Modal>
@@ -274,14 +292,14 @@ const PostCard = ({ blog, token = null }) => {
             </IconButton>
             <Typography variant="body2">{blog.views_count || 0}</Typography>
 
-            <IconButton onClick={() => commentblog()} aria-label="comments">
+            <IconButton onClick={(e) => commentblog(e)} aria-label="comments">
               <ChatBubbleOutlineIcon fontSize="small" />
             </IconButton>
             <Typography variant="body2">{blog.comments?.length || 0}</Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton onClick={() => likeBlog()} aria-label="like">
+            <IconButton onClick={(e) => likeBlog(e)} aria-label="like">
               <FavoriteIcon
                 sx={{ color: like ? "red" : "inherit" }}
               />
